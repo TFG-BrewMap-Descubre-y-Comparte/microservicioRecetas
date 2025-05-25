@@ -61,7 +61,8 @@ public class RecipeController {
 		        }
 		        return ResponseEntity.ok(recipes);
 		    } catch (Exception e) {
-		        throw new ExceptionPageNotFound("The page index is out of range.");
+		    	e.printStackTrace(); // o log.error(...)
+		        throw new ExceptionPageNotFound("Error real: " + e.getMessage());
 		    }
 		}
 		

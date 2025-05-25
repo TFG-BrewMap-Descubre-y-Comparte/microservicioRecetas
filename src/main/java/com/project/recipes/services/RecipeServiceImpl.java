@@ -11,8 +11,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import com.project.recipes.dto.RecipeDTO;
+import com.project.recipes.dto.UserDTO;
 import com.project.recipes.exceptions.ExceptionInvalidRecipeData;
 import com.project.recipes.exceptions.ExceptionNotFoundRecipe;
 import com.project.recipes.persistance.models.JwtUtil;
@@ -28,6 +32,9 @@ public class RecipeServiceImpl implements RecipeServiceI{
 	
 	@Autowired
 	private JwtUtil jwtUtils;
+	
+	@Autowired
+	private RestTemplate restTemplate;
 
 
 	@Override
@@ -100,7 +107,8 @@ public class RecipeServiceImpl implements RecipeServiceI{
 		
 		List<RecipeDTO> recipesDTOs = new ArrayList<>();
 		for(Recipe recipe : recipesPage) {
-			RecipeDTO recipeDTO = new RecipeDTO(recipe);
+			String username = getUserById(recipe.getUserId());
+			RecipeDTO recipeDTO = new RecipeDTO(recipe, username);
 			recipesDTOs.add(recipeDTO);
 		}
 		
@@ -224,6 +232,18 @@ public class RecipeServiceImpl implements RecipeServiceI{
 
 	    // Usas el constructor del DTO
 	    return new RecipeDTO(existingRecipe);
+	}
+	
+	public String getUserById(Integer userId) {
+	    String userServiceUrl = "http://localhost:8083/api/internal/user/" + userId;
+
+	    try {
+	    	
+	        ResponseEntity<UserDTO> response = restTemplate.getForEntity(userServiceUrl, UserDTO.class);
+	        return response.getBody().getUsername();
+	    } catch (HttpClientErrorException | HttpServerErrorException e) {
+	        throw new RuntimeException("Error calling User Service: " + e.getStatusCode());
+	    }
 	}
 
 
