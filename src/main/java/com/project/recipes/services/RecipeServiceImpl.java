@@ -70,7 +70,7 @@ public class RecipeServiceImpl implements RecipeServiceI{
 	        recipe.setUserId(userId);
 	        recipe.setTittle(dto.getTittle());
 	        recipe.setDescription(dto.getDescription());
-	        recipe.setMetodo(dto.getMetodo());
+	        recipe.setMetodo(dto.getMetodo());	
 	        recipe.setOrigen(dto.getOrigen());
 
 	        // Imagen por defecto
@@ -245,6 +245,21 @@ public class RecipeServiceImpl implements RecipeServiceI{
 	        throw new RuntimeException("Error calling User Service: " + e.getStatusCode());
 	    }
 	}
+	
+	@Override
+	public Page<RecipeDTO> getRecipesByMetodo(String metodo, Pageable pageable) {
+	    Page<Recipe> recipesPage = recipeRepository.findByMetodoIgnoreCase(metodo, pageable);
+
+	    List<RecipeDTO> recipeDTOs = new ArrayList<>();
+	    for (Recipe recipe : recipesPage) {
+	        String username = getUserById(recipe.getUserId());
+	        RecipeDTO recipeDTO = new RecipeDTO(recipe, username);
+	        recipeDTOs.add(recipeDTO);
+	    }
+
+	    return new PageImpl<>(recipeDTOs, pageable, recipesPage.getTotalElements());
+	}
+
 
 
 

@@ -42,7 +42,6 @@ public class FavoriteRecipeController {
 	
 	// Eliminar una receta de favoritos
 	@DeleteMapping("/favorites/{recipeId}")
-
     public ResponseEntity<Response<FavoriteRecipe>> removeFavorite(
             @RequestHeader("Authorization") String token,
             @PathVariable("recipeId") Integer recipeId) {

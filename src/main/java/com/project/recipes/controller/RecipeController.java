@@ -61,7 +61,7 @@ public class RecipeController {
 		        }
 		        return ResponseEntity.ok(recipes);
 		    } catch (Exception e) {
-		    	e.printStackTrace(); // o log.error(...)
+		    	e.printStackTrace();
 		        throw new ExceptionPageNotFound("Error real: " + e.getMessage());
 		    }
 		}
@@ -85,6 +85,18 @@ public class RecipeController {
 		public RecipeDTO getRecipeById(@PathVariable("id") int id) {
 			return recipeService.getRecipeById(id);
 		}
+		
+		@GetMapping("/method/{method}")
+		public Page<RecipeDTO> getRecipesByMetodo(
+		        @PathVariable("method") String method,
+		        @RequestParam(name = "page", defaultValue = "0") int page,
+		        @RequestParam(name = "size", defaultValue = "5") int size) {
+		    Pageable pageable = PageRequest.of(page, size);
+		    return recipeService.getRecipesByMetodo(method, pageable);
+		}
+
+
+
 
 
 

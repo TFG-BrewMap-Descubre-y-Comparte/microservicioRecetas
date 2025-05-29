@@ -22,6 +22,9 @@ public interface RecipeServiceI {
 		ResponseEntity<Response<Recipe>> deleteRecipe(int id, String authHeader);
 		
 		RecipeDTO getRecipeById(int id);
+		
+		Page<RecipeDTO> getRecipesByMetodo(String metodo, Pageable pageable);
+
 
 
 }
